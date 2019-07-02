@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="AdminCleanCash.Messages">
+  <ContentView.Content>
+        <FlexLayout Direction="Column">
+            <ListView x:Name="messagesBox" />
+            <FlexLayout HeightRequest="250"   Direction="Row" >
+                <Entry Margin="10,0,10,50" x:Name="text"  WidthRequest="300"  />
+                <Button Text=">" Clicked="send_click"  FontSize="40"  WidthRequest="100" HeightRequest="100" ></Button>
+            </FlexLayout>
+        </FlexLayout>
+    </ContentView.Content>
+</ContentView>
