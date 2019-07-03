@@ -1,8 +1,10 @@
 ﻿using CleancashChat2.Model.Objects;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,24 +41,39 @@ namespace CleancashChat2.Model.Modules
             }
         }
 
-        public List<Message> GetMessages(string id)
+        public async Task<List<Message>> GetMessages(string id)
         {
-            int status = 0;
-            string text = "SELECT * FROM messages_mychat WHERE id_dialog='"+id+"' ORDER BY id ASC";
-            MySqlCommand myCommand = new MySqlCommand(text, myConnection);
-            MySqlDataReader reader = myCommand.ExecuteReader();
+            //int status = 0;
+            //string text = "SELECT * FROM messages_mychat WHERE id_dialog='"+id+"' ORDER BY id ASC";
+            //MySqlCommand myCommand = new MySqlCommand(text, myConnection);
+            //MySqlDataReader reader = myCommand.ExecuteReader();
+            var uri = "http://cleancash.net/model/api/mobile/api_chat.php?mobile&methode=GetMessages&id_dialog="+id;
+
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync(uri);
+            string responseBody = await response.Content.ReadAsStringAsync();
+            JArray ja = JArray.Parse(responseBody);
             List<Message> messages = new List<Message>();
-            while (reader.Read())
+            foreach (var item in ja)
             {
-                messages.Add(new Message()
+                messages.Add(new Message
                 {
-                    //DateTime = Convert.ToDateTime(reader["date"].ToString()),
-                    Text = reader["text"].ToString(),
-                    To = reader["_to"].ToString(),
-                    From = reader["_from"].ToString()
-                }) ;
+                    Text = item["text"].ToString(),
+                    To = item["_to"].ToString(),
+                    From = item["_from"].ToString()
+                });
             }
-            reader.Close();
+            //while (reader.Read())
+            //{
+            //    messages.Add(new Message()
+            //    {
+            //        //DateTime = Convert.ToDateTime(reader["date"].ToString()),
+            //        Text = reader["text"].ToString(),
+            //        To = reader["_to"].ToString(),
+            //        From = reader["_from"].ToString()
+            //    }) ;
+            //}
+            //reader.Close();
             return messages;
         }
 

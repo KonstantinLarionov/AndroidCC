@@ -3,6 +3,7 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,12 +41,15 @@ namespace CleancashChat2.Model.Modules
             }
         }
 
-        public void SetMessages(Message message)
+        public async void SetMessages(Message message)
         {
-            string text = "INSERT INTO messages_mychat SET date='"+DateTime.Now.ToString()+"', id_dialog='"+message.ID_Dialog+"', text='"+message.Text+"', _from='admin', _to='"+message.To+"'";
-            MySqlCommand myCommand = new MySqlCommand(text, myConnection);
-            MySqlDataReader reader = myCommand.ExecuteReader();
-            reader.Close();
+            var uri = "http://cleancash.net/model/api/mobile/api_chat.php?mobile&methode=SendMessages&id_dialog=" + message.ID_Dialog + "&text=" + message.Text;
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync(uri);
+            //string text = "INSERT INTO messages_mychat SET date='"+DateTime.Now.ToString()+"', id_dialog='"+message.ID_Dialog+"', text='"+message.Text+"', _from='admin', _to='"+message.To+"'";
+            //MySqlCommand myCommand = new MySqlCommand(text, myConnection);
+            //MySqlDataReader reader = myCommand.ExecuteReader();
+            //reader.Close();
         }
 
     }

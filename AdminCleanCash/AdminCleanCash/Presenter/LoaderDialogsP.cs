@@ -20,29 +20,29 @@ namespace CleancashChat2.Presenter
             db.InitialConnect();
         }
 
-        private void AsyncDialogsTake(ListView data)
+        private async void AsyncDialogsTake(ListView data)
         {
           
-            List<Dialog> dialogs = db.GetDialogs();
+            List<Dialog> dialogs = await db.GetDialogsAsync();
             string[] dataarr = new string[dialogs.Count];
             for (int i = 0; i < dialogs.Count; i++)
             {
                 dataarr[i] = dialogs[i].Header.ID;
             }
-            
-            data.ItemsSource = dataarr;
-            //Thread.Sleep(3000);
-            //AsyncDialogsTake(data);
+            Device.BeginInvokeOnMainThread(()=> { data.ItemsSource = dataarr; });
+           
+            Thread.Sleep(3000);
+            AsyncDialogsTake(data);
         }
 
         public void GetDialog(ListView data)
         {
-            AsyncDialogsTake(data);
-            //Task t1 = new Task(() =>
-            //{
-            //    AsyncDialogsTake(data);
-            //});
-            //t1.Start();
+            //AsyncDialogsTake(data);
+            Task t1 = new Task(() =>
+            {
+                AsyncDialogsTake(data);
+            });
+            t1.Start();
         }
     }
 }

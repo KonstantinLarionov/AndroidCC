@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using CleancashChat2.Model.Objects;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json.Linq;
 
 namespace CleancashChat2.Model.Modules
 {
@@ -39,21 +41,20 @@ namespace CleancashChat2.Model.Modules
             }
         }
 
-        public List<Dialog> GetDialogs()
+        public async Task<List<Dialog>> GetDialogsAsync()
         {
-            string text = "SELECT * FROM dialogs_mychat ORDER BY id DESC";
-            MySqlCommand myCommand = new MySqlCommand(text, myConnection);
-            MySqlDataReader reader = myCommand.ExecuteReader();
+            var uri = "http://cleancash.net/model/api/mobile/api_chat.php?mobile&methode=GetDialogs";
+
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync(uri);
+            string responseBody = await response.Content.ReadAsStringAsync();
+            JArray ja = JArray.Parse(responseBody);
             List<Dialog> dialogs = new List<Dialog>();
-            while (reader.Read())
+            foreach (var item in ja)
             {
-                dialogs.Add(new Dialog()
-                {
-                    Header = new Header() { NameUser = reader["user_1"].ToString(), ID = reader["id"].ToString() },
-                    NewMessage = Convert.ToInt32( reader["have_new"])
-                }) ;
+                dialogs.Add(new Dialog { Header = new Header {  ID = item["id"].ToString()} });
             }
-            reader.Close();
+          
             return dialogs;
         }
 

@@ -16,6 +16,7 @@ namespace CleancashChat2.Presenter
         private Thread mainTask;
         public static string now_id;
         public static string now_name;
+        private string[] buffer = new string[] { "" };
 
         public LoaderMessagesP()
         {
@@ -23,58 +24,39 @@ namespace CleancashChat2.Presenter
             db.InitialConnect();
         }
 
-        private void AsyncMessagesTake(ListView dataGrid, string id)
+        private async void AsyncMessagesTake(ListView dataGrid, string id)
         {
             now_id = id;
-            List<Message> messages = db.GetMessages(id);
+            List<Message> messages = await db.GetMessages(id);
             string[] text = new string[messages.Count];
             for (int i = 0; i < messages.Count; i++)
             {
                 text[i] = messages[i].Text;
             }
-            Device.BeginInvokeOnMainThread(() => {
-                dataGrid.ItemsSource = text;
-            });
-           
+
+            if (buffer.Length != text.Length)
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    dataGrid.ItemsSource = text;
+                    
+                    buffer = text;
+                });
+            }
             Thread.Sleep(3000);
             AsyncMessagesTake(dataGrid, id);
         }
 
         public void GetMessages(ListView dataGrid, string item)
         {
-            //if (mainTask == null)
-            //{
-            //    Header hed = item;
-            //    if (hed != null)
-            //    {
-                    Task t1 = new Task(() =>
-                    {
-                        mainTask = Thread.CurrentThread;
+            Task t1 = new Task(() =>
+            {
+                mainTask = Thread.CurrentThread;
 
-                        //now_name = hed.NameUser;
-                        AsyncMessagesTake(dataGrid, item);
-                    });
+                //now_name = hed.NameUser;
+                AsyncMessagesTake(dataGrid, item);
+            });
             t1.Start();
-            //    }
-            //}
-            //else
-            //{
-            //    mainTask.Abort();
-            //    mainTask = null;
-            //    Header hed = item;
-            //    if (hed != null)
-            //    {
-            //        Task t1 = new Task(() =>
-            //        {
-            //            mainTask = Thread.CurrentThread;
-
-            //            now_name = hed.NameUser;
-            //            AsyncMessagesTake(dataGrid, hed.ID);
-            //        });
-            //        t1.Start();
-            //    }
-            //}
-
         }
     }
 }
