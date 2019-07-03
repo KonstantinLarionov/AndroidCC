@@ -43,7 +43,7 @@ namespace CleancashChat2.Model.Modules
 
         public async void SetMessages(Message message)
         {
-            var uri = "http://cleancash.net/model/api/mobile/api_chat.php?mobile&methode=SendMessages&id_dialog=" + message.ID_Dialog + "&text=" + message.Text;
+            var uri = "http://cleancash.net/model/api/mobile/api_chat.php?mobile&methode=SendMessages&id_dialog=" + message.ID_Dialog + "&text=" + message.Text+ "&adm=sergey";
             HttpClient client = new HttpClient();
             var response = await client.GetAsync(uri);
             //string text = "INSERT INTO messages_mychat SET date='"+DateTime.Now.ToString()+"', id_dialog='"+message.ID_Dialog+"', text='"+message.Text+"', _from='admin', _to='"+message.To+"'";

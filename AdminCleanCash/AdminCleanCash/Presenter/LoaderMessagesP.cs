@@ -31,7 +31,7 @@ namespace CleancashChat2.Presenter
             string[] text = new string[messages.Count];
             for (int i = 0; i < messages.Count; i++)
             {
-                text[i] = messages[i].Text;
+                text[i] = messages[i].Text + " |<- ("+ messages[i].From + ")";
             }
 
             if (buffer.Length != text.Length)
